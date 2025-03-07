@@ -103,6 +103,10 @@ self._tokenizer 변수가 tokenization
 
 여기 self._model.generate() 함수는 llava_arch.py의 generate() 으로 보임. (매핑 코드 동작로직을 쉽게 판단하기 힘들어서 추정으로 마무리)
 
+## back to via_stream_handler.py코드
+
+VLM response를 받아서, _on_vlm_chunk_response함수 내에서 self._process_output 호출함. ViaStreamHandler._get_aggregated_summary()함수 내부 코드에서 최종 답변 생성을 위해, VLM결과를 입력으로 (_ctx_mgr으로 관리하는) RAG 호출이 됨. (line 1850). 그리고, _ctx_mgr 내부적으로 데이터 저장. --> 밑에 다시한번 기록함.
+
 * * *
 
 # VIA Server `qa` Function Analysis
@@ -156,4 +160,19 @@ ContextManagerHandler.configure() 함수에서 Config 값 세팅, Db 세팅,  ch
 
 VectorRag 일때와 GraphRag일때 사용 DB 가 다른 것으로 보임. 각각 (MilvusDBTool / Neo4jGraphDB).
 
-Via_server.py 및 via_stream_handler.py 코드에서, Summarize 시에는 ViaStreamHandler._get_aggregated_summary()함수 내부 코드에서 최종 답변 생성을 위해, VLM결과를 입력으로 (_ctx_mgr으로 관리하는) RAG 호출이 됨. (line 1850). 그리고, _ctx_mgr 내부적으로 데이터 저장. (_via_health_eval 경로는 로깅용). 그 이후context_manager.py 및 OfflineBatchSummarization 또는 RefineSummarization 내부에서 db형태로 저장되고 나중에 사용될것으로 추정되나 조금더확인필요.
+Via_server.py 및 via_stream_handler.py 코드에서, Summarize 시에는 ViaStreamHandler._get_aggregated_summary()함수 내부 코드에서 최종 답변 생성을 위해, VLM결과를 입력으로 (_ctx_mgr으로 관리하는) RAG 호출이 됨. (line 1850). 그리고, _ctx_mgr 내부적으로 데이터 저장. (_via_health_eval 경로는 로깅용). 그 이후context_manager.py 및 OfflineBatchSummarization 또는 RefineSummarization 내부에서 db형태로 저장되고,
+
+그다음 qa시에 retrieve_documents 함수를 통해 history가 호출됨. 이 때 summarize 결과 또한 읽어질 것으로 보임.
+
+
+# DB
+
+## Interaction between summary and qa
+
+_ctx_mgr.add_doc 함수 호출로 인해, context_manager.py의 line 104 (if item and "add_doc" in item:) 부분 루트를 탐. 그리고 Milvus/Neo4j DB에 기록됨.
+
+그러면, _functions 가 관리하는 함수들, 즉 chat_function.py / offline_batch.py / refine.py 등의 aprocess_doc 함수가 연달아 호출됨. 
+
+이 때, chat_function.py 의 aprocess_doc 함수의 경우, vector_rag/graph_rag의 aprocess_doc 함수를 호출함. 그러면 VLM 최종 결과 (RAG까지 활용한 최종 결과)가 DB 파일에 기록되는것으로 보임. 이는 아마도 chat 호출시에 활용할것으로 보임. --> 위에서 기록한 ViaStreamHandler._get_aggregated_summary() 함수에서 호출되는 req_info._ctx_mgr.call() 호출 내부에서 DB 형태로 기록하는 정보와 대조 필요. 
+
+

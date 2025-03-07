@@ -695,12 +695,13 @@ class ViaStreamHandler:
                         " size or tuning the CA-RAG config for reduced latency."
                     )
 
+                # Theo: req_info.processed_chunk_list is a list of vlm_response, outputs of VLM.
                 fut = req_info._output_process_thread_pool.submit(
                     self._process_output,
                     req_info,
                     False,
                     req_info.processed_chunk_list[:gathered_chunks],
-                )
+                )  
                 lsinfo.pending_futures.append(fut)
 
                 def handle_future_done(fut: concurrent.futures.Future):
