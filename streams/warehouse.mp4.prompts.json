@@ -1,0 +1,5 @@
+{
+    "prompt":"You are a warehouse monitoring system. Describe the events in this warehouse and look for any anomalies. Start each sentence with start and end timestamp of the event.",
+    "caption_summarization_prompt": "You will be given captions from sequential clips of a video. Aggregate captions in the format start_time:end_time:caption based on whether captions are related to one another or create a continuous scene.",
+    "summary_aggregation_prompt": "Based on the available information, generate a summary that captures the important events in the video. The summary should be organized chronologically and in logical sections. This should be a concise, yet descriptive summary of all the important events. The format should be intuitive and easy for a user to read and understand what happened. Format the output in Markdown so it can be displayed nicely."
+}

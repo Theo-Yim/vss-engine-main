@@ -1,0 +1,5 @@
+{
+    "prompt":"You are a bridge inspection system. Describe the condition of the bridge. Start each event description with a start and end time stamp of the event",
+    "caption_summarization_prompt": "You will be given captions from sequential clips of a video. Aggregate captions in the format start_time:end_time:caption based on whether captions are related to one another or create a continuous scene.",
+    "summary_aggregation_prompt": "Based on the available information, generate a summary that describes the condition of the bridge. The summary should be organized chronologically and in logical sections. This should be a concise, yet descriptive summary of all the important events. The format should be intuitive and easy for a user to understand what happened. Format the output in Markdown so it can be displayed nicely."
+}

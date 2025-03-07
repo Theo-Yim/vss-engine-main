@@ -1,0 +1,120 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Config",
+    "definitions": {
+        "Config": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "summarization": {
+                    "$ref": "#/definitions/Summarization"
+                }
+            },
+            "required": [
+                "summarization"
+            ],
+            "title": "Config"
+        },
+        "Summarization": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "enable": {
+                    "type": "boolean"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": ["batch", "refine", "stuff"]
+                },
+                "llm": {
+                    "$ref": "#/definitions/Llm"
+                },
+                "params": {
+                    "$ref": "#/definitions/Params"
+                },
+                "prompts": {
+                    "$ref": "#/definitions/Prompts"
+                }
+            },
+            "required": [
+                "enable",
+                "llm",
+                "method",
+                "prompts"
+            ],
+            "title": "Summarization"
+        },
+        "Llm": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+                "model": {
+                    "type": "string"
+                },
+                "max_tokens": {
+                    "type": "integer",
+                    "minimum": 100,
+                    "maximum": 10000
+                },
+                "top_p": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1.0
+                },
+                "temperature": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1.0
+                },
+                "seed": {
+                    "type": "integer"
+                },
+                "frequency_penalty": {
+                    "type": "number",
+                    "minimum": -2,
+                    "maximum": 2
+                },
+                "presence_penalty": {
+                    "type": "number",
+                    "minimum": -2,
+                    "maximum": 2
+                }
+            },
+            "required": [
+                "model",
+                "max_tokens"
+            ],
+            "title": "Llm"
+        },
+        "Params": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "batch_size": {
+                    "type": "integer"
+                }
+            },
+            "title": "Params"
+        },
+        "Prompts": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "caption_summarization": {
+                    "type": "string"
+                },
+                "summary_aggregation": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "caption",
+                "caption_summarization"
+            ],
+            "title": "Prompts"
+        }
+    }
+}
